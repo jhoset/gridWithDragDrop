@@ -1,0 +1,94 @@
+<div class="k-text-center">
+  Pruebas
+</div>
+<hr>
+<!--<kendo-grid-->
+<!--  [data]="gridView"-->
+<!--  [pageSize]="pageSize"-->
+<!--  [skip]="skip"-->
+<!--  [pageable]="true"-->
+<!--  (pageChange)="pageChange($event)"-->
+<!--  [height]="400"-->
+<!--  [selectable]="true">-->
+<!--  <kendo-grid-checkbox-column showSelectAll="true"  ></kendo-grid-checkbox-column>-->
+<!--  <kendo-grid-column field="ProductName" title="Product Name"></kendo-grid-column>-->
+<!--  <kendo-grid-column field="UnitsInStock" title="Units In Stock"></kendo-grid-column>-->
+<!--  <kendo-grid-column field="UnitsOnOrder" title="Units On Order"></kendo-grid-column>-->
+<!--  <kendo-grid-column field="ReorderLevel" title="Reorder Level"></kendo-grid-column>-->
+<!--</kendo-grid>-->
+<!--<hr>-->
+<div class="container" >
+  <div class="!k-d-flex-row">
+    <div class="col-6">
+      <div class="k-block k-text-center">
+        Grid Azul - Cantidad (firstGridData): {{ firstGridData.length }}
+      </div>
+      <kendo-grid
+        style="background: blue"
+        [data]="firstGridData"
+        [selectable]="true"
+        #firstGrid
+        (drop)="onDrop($event, firstGrid, secondGrid)"
+        (cellClick)="onCellClick($event)"
+        (dragover)="onDragOver($event, firstGrid)"
+        (dragstart)="onDragStart($event, firstGrid)"
+        [rowSelected]="isRowSelected"
+      >
+        <kendo-grid-column field="ProductID" title="ID" [width]="40"> </kendo-grid-column>
+        <kendo-grid-column field="ProductName" title="Name" [width]="180"> </kendo-grid-column>
+        <kendo-grid-column field="UnitPrice" title="Price" [width]="80"> </kendo-grid-column>
+        <kendo-grid-messages [noRecords]="noRecordsMsg"> </kendo-grid-messages>
+      </kendo-grid>
+
+    </div>
+    <div class="col-6">
+      <div class="k-block k-text-center">
+        Grid Rojo - Cantidad (firstGridData): {{ secondGridData.length }}
+      </div>
+      <kendo-grid
+        style="background: red"
+        class="separator"
+        [data]="secondGridData"
+        #secondGrid
+        [selectable]="true"
+        (cellClick)="onCellClick($event)"
+        (drop)="onDrop($event, secondGrid, firstGrid)"
+        (dragover)="onDragOver($event, secondGrid)"
+        (dragstart)="onDragStart($event, secondGrid)"
+        [rowSelected]="isRowSelected">
+        <kendo-grid-column field="ProductID" title="ID" [width]="40"> </kendo-grid-column>
+        <kendo-grid-column field="ProductName" title="Name" [width]="180"> </kendo-grid-column>
+        <kendo-grid-column field="UnitPrice" title="Price" [width]="80"> </kendo-grid-column>
+        <kendo-grid-messages [noRecords]="noRecordsMsg"> </kendo-grid-messages>
+      </kendo-grid>
+    </div>
+  </div><hr>
+
+<!--  <b> Id Items Seleccionados:</b>-->
+<!--  <ul>-->
+<!--    <li *ngFor="let item of setOfIndex" > {{ item}} </li>-->
+<!--  </ul>-->
+<!--</div>-->
+
+<!--<br>-->
+<hr>
+  TEST COMPONENT
+  <hr>
+<!--PRIMERO-->
+<app-grid-with-drag-drop #firstGridWithDragDropRef [dataSource]="firstGridData"
+                         [selectable]="true"
+                         [secondGridRef]="secondGridWithDragDropRef.currentGridRef"
+                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"
+                         [nameIdItem]="'ProductID'">
+</app-grid-with-drag-drop>
+<br>
+<!--SEGUNDO-->
+<app-grid-with-drag-drop #secondGridWithDragDropRef [dataSource]="secondGridData"
+                         [selectable]="true"
+                         [secondGridRef]="firstGridWithDragDropRef.currentGridRef"
+                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"
+                         [nameIdItem]="'ProductID'">
+</app-grid-with-drag-drop>
+
+
+
