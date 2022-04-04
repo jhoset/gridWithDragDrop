@@ -1,0 +1,75 @@
+<div class="row">
+  <!--  FIRST GRID-->
+  <div class="col-6">
+    <!-- Header -->
+    <div style="height: 400px"  class="k-block">
+      <button
+        style="width: 100%;"
+        kendoButton
+        (click)="onMoveSecondGrid()"
+        themeColor="primary"
+        [toggleable]="true"
+      >
+        Rigth
+      </button>
+      <!-- Body ( Grid ) -->
+      <kendo-grid
+        [data]="firstGridData"
+        [height]="firstGridHeight"
+        [selectable]="true"
+        #firstGrid
+        (drop)="onDrop($event, firstGrid, secondGrid)"
+        (cellClick)="onCellClick($event)"
+        (dragover)="onDragOver($event, firstGrid)"
+        (dragstart)="onDragStart($event, firstGrid)"
+        [rowSelected]="isRowSelected">
+        <ng-container *ngFor="let column of firstGridColumns">
+          <kendo-grid-column [field]="column.field" [title]="column.title" [width]="column.width"></kendo-grid-column>
+        </ng-container>
+        <kendo-grid-messages [noRecords]="noRecordsMsg"></kendo-grid-messages>
+      </kendo-grid>
+    </div>
+    <!-- Footer (optional) -->
+    <div *ngIf="firstGridFooterTemplate" [ngClass]="{height: this.firstGridFooterHeight}">
+      <ng-container *ngTemplateOutlet="firstGridFooterTemplate">
+      </ng-container>
+    </div>
+  </div>
+  <!--SECOND GRID-->
+  <div class="col-6">
+    <!-- Header -->
+    <div style="height: 400px" class="k-block ">
+      <button
+        style="width: 100%"
+        kendoButton
+        (click)="onMoveFirstGrid()"
+        themeColor="primary"
+        [toggleable]="true"
+      >
+        Rigth
+      </button>
+      <!-- Body ( Grid ) -->
+      <kendo-grid
+        [data]="secondGridData"
+        [height]="secondGridHeight"
+        #secondGrid
+        [selectable]="true"
+        (cellClick)="onCellClick($event)"
+        (drop)="onDrop($event, secondGrid, firstGrid)"
+        (dragover)="onDragOver($event, secondGrid)"
+        (dragstart)="onDragStart($event, secondGrid)"
+        [rowSelected]="isRowSelected">
+        <ng-container *ngFor="let column of firstGridColumns">
+          <kendo-grid-column [field]="column.field" [title]="column.title" [width]="column.width"></kendo-grid-column>
+        </ng-container>
+        <kendo-grid-messages [noRecords]="noRecordsMsg"></kendo-grid-messages>
+      </kendo-grid>
+      <!-- Footer (optional) -->
+      <div *ngIf="secondGridFooterTemplate" >
+        <ng-container *ngTemplateOutlet="secondGridFooterTemplate">
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+</div>

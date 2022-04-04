@@ -10,7 +10,9 @@ import { TreeViewModule } from '@progress/kendo-angular-treeview';
 import { ButtonControlPanelComponent } from './button-control-panel/button-control-panel.component';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import {CheckBoxModule} from "@progress/kendo-angular-inputs";
-import { GridWithDragDropComponent } from './grid-with-drag-drop/grid-with-drag-drop.component';
+import {StepperModule} from "@progress/kendo-angular-layout";
+import { GridPlusComponent } from './grid-plus/grid-plus.component';
+import {LabelModule} from "@progress/kendo-angular-label";
 
 
 
@@ -21,18 +23,20 @@ import { GridWithDragDropComponent } from './grid-with-drag-drop/grid-with-drag-
   declarations: [
     AppComponent,
     ButtonControlPanelComponent,
-    GridWithDragDropComponent,
+    GridPlusComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    DropDownsModule,
-    BrowserAnimationsModule,
-    GridModule,
-    TreeViewModule,
-    ButtonsModule,
-    CheckBoxModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        DropDownsModule,
+        BrowserAnimationsModule,
+        GridModule,
+        TreeViewModule,
+        ButtonsModule,
+        CheckBoxModule,
+        StepperModule,
+        LabelModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

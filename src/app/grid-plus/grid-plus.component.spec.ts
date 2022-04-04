@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GridWithDragDropComponent } from './grid-with-drag-drop.component';
+import { GridPlusComponent } from './grid-plus.component';
 
-describe('GridWithDragDropComponent', () => {
-  let component: GridWithDragDropComponent;
-  let fixture: ComponentFixture<GridWithDragDropComponent>;
+describe('GridPlusComponent', () => {
+  let component: GridPlusComponent;
+  let fixture: ComponentFixture<GridPlusComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GridWithDragDropComponent ]
+      declarations: [ GridPlusComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GridWithDragDropComponent);
+    fixture = TestBed.createComponent(GridPlusComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

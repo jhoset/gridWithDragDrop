@@ -1,5 +1,5 @@
 <div class="k-text-center">
-  Pruebas
+  GRID WITH DRAG & DROP FUNTIONALITY
 </div>
 <hr>
 <!--<kendo-grid-->
@@ -22,8 +22,18 @@
     <div class="col-6">
       <div class="k-block k-text-center">
         Grid Azul - Cantidad (firstGridData): {{ firstGridData.length }}
+          <button
+            kendoButton
+            (click)="onMoveSecondGrid()"
+            themeColor="primary"
+            [toggleable]="true"
+          >
+            Rigth
+          </button>
+
       </div>
       <kendo-grid
+        [height]="heightFirst"
         style="background: blue"
         [data]="firstGridData"
         [selectable]="true"
@@ -39,16 +49,24 @@
         <kendo-grid-column field="UnitPrice" title="Price" [width]="80"> </kendo-grid-column>
         <kendo-grid-messages [noRecords]="noRecordsMsg"> </kendo-grid-messages>
       </kendo-grid>
-
     </div>
     <div class="col-6">
       <div class="k-block k-text-center">
         Grid Rojo - Cantidad (firstGridData): {{ secondGridData.length }}
+        <button
+          kendoButton
+          (click)="onMoveFirstGrid()"
+          themeColor="primary"
+          [toggleable]="true"
+        >
+          Left
+        </button>
       </div>
       <kendo-grid
         style="background: red"
         class="separator"
         [data]="secondGridData"
+        [height]="heightSecond"
         #secondGrid
         [selectable]="true"
         (cellClick)="onCellClick($event)"
@@ -61,34 +79,40 @@
         <kendo-grid-column field="UnitPrice" title="Price" [width]="80"> </kendo-grid-column>
         <kendo-grid-messages [noRecords]="noRecordsMsg"> </kendo-grid-messages>
       </kendo-grid>
+      <div *ngIf="customTemplate">
+        <ng-container *ngTemplateOutlet="customTemplate">
+        </ng-container>
+      </div>
+
     </div>
   </div><hr>
 
-<!--  <b> Id Items Seleccionados:</b>-->
-<!--  <ul>-->
-<!--    <li *ngFor="let item of setOfIndex" > {{ item}} </li>-->
-<!--  </ul>-->
-<!--</div>-->
+  <b> Id Items Seleccionados:  Inbdex: {{dropIndex}}} </b>
+  <ul>
+    <li *ngFor="let item of setOfIndex" > {{ item}} </li>
+  </ul>
 
-<!--<br>-->
-<hr>
-  TEST COMPONENT
-  <hr>
-<!--PRIMERO-->
-<app-grid-with-drag-drop #firstGridWithDragDropRef [dataSource]="firstGridData"
-                         [selectable]="true"
-                         [secondGridRef]="secondGridWithDragDropRef.currentGridRef"
-                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"
-                         [nameIdItem]="'ProductID'">
-</app-grid-with-drag-drop>
+</div>
+
 <br>
-<!--SEGUNDO-->
-<app-grid-with-drag-drop #secondGridWithDragDropRef [dataSource]="secondGridData"
-                         [selectable]="true"
-                         [secondGridRef]="firstGridWithDragDropRef.currentGridRef"
-                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"
-                         [nameIdItem]="'ProductID'">
-</app-grid-with-drag-drop>
+<hr>
+  KENDO STEEPER
+  <hr>
+<!--&lt;!&ndash;PRIMERO&ndash;&gt;-->
+<!--<app-beta #firstGridWithDragDropRef [dataSource]="firstGridData"-->
+<!--                         [selectable]="true"-->
+<!--                         [secondGridRef]="secondGridWithDragDropRef.currentGridRef"-->
+<!--                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"-->
+<!--                         [nameIdItem]="'ProductID'">-->
+<!--</app-beta>-->
+<!--<br>-->
+<!--&lt;!&ndash;SEGUNDO&ndash;&gt;-->
+<!--<app-beta #secondGridWithDragDropRef [dataSource]="secondGridData"-->
+<!--                         [selectable]="true"-->
+<!--                         [secondGridRef]="firstGridWithDragDropRef.currentGridRef"-->
+<!--                         [columns]="[{ field: 'ProductID', title:'ID', width: 40 }, { field: 'ProductName', title:'Name', width: 40 }]"-->
+<!--                         [nameIdItem]="'ProductID'">-->
+<!--</app-beta>-->
 
 
 
