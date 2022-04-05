@@ -23,7 +23,7 @@ import {LabelModule} from "@progress/kendo-angular-label";
   declarations: [
     AppComponent,
     ButtonControlPanelComponent,
-    GridPlusComponent,
+    GridPlusComponent
   ],
     imports: [
         BrowserModule,

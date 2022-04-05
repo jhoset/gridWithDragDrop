@@ -3,10 +3,10 @@
   <div class="col-6">
     <!-- Header -->
     <div style="height: 400px"  class="k-block">
-      <button
+      <button *ngIf="skipButtons"
         style="width: 100%;"
         kendoButton
-        (click)="onMoveSecondGrid()"
+        (click)="onMove(firstGrid, secondGrid)"
         themeColor="primary"
         [toggleable]="true"
       >
@@ -30,7 +30,7 @@
       </kendo-grid>
     </div>
     <!-- Footer (optional) -->
-    <div *ngIf="firstGridFooterTemplate" [ngClass]="{height: this.firstGridFooterHeight}">
+    <div *ngIf="firstGridFooterTemplate" >
       <ng-container *ngTemplateOutlet="firstGridFooterTemplate">
       </ng-container>
     </div>
@@ -40,9 +40,10 @@
     <!-- Header -->
     <div style="height: 400px" class="k-block ">
       <button
+        *ngIf="skipButtons"
         style="width: 100%"
         kendoButton
-        (click)="onMoveFirstGrid()"
+        (click)="onMove(secondGrid, firstGrid)"
         themeColor="primary"
         [toggleable]="true"
       >
@@ -59,7 +60,7 @@
         (dragover)="onDragOver($event, secondGrid)"
         (dragstart)="onDragStart($event, secondGrid)"
         [rowSelected]="isRowSelected">
-        <ng-container *ngFor="let column of firstGridColumns">
+        <ng-container *ngFor="let column of secondGridColumns">
           <kendo-grid-column [field]="column.field" [title]="column.title" [width]="column.width"></kendo-grid-column>
         </ng-container>
         <kendo-grid-messages [noRecords]="noRecordsMsg"></kendo-grid-messages>

@@ -3,9 +3,10 @@
 <!--</app-button-control-panel>-->
 
 
-<app-grid-plus [firstGridData]="firstGridData" [secondGridData]="secondGridData" [firstGridColumns]="firstGridColumns"
+<app-grid-plus [firstGridData]="firstData" [secondGridData]="secondData"
+               [firstGridColumns]="firstGridColumns" [skipButtons]="false"
                [secondGridColumns]="SecondGridColumns" [objectIdName]="'ProductID'"
-                [secondGridFooterTemplate]="fgFooter">
+               [secondGridFooterTemplate]="fgFooter">
   <ng-template #fgFooter>
     <div>
       <kendo-label
@@ -27,3 +28,18 @@
     </div>
   </ng-template>
 </app-grid-plus>
+
+<div>
+  <label> Registration Form Type:</label>
+  <kendo-dropdownlist
+    [data]="registrationForm"
+    [textField]="'key'"
+    [valueField]="'value'"
+    [defaultItem]="defaultItemRegistrationForm">
+  </kendo-dropdownlist>
+</div>
+<hr>
+
+{{ 'First' + (firstData | json) }}
+<hr>
+{{ 'Second' + (secondData | json) }}

@@ -30,11 +30,12 @@ export interface gridColumn {
 export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
   // Inputs
   @Input() objectIdName
-  @Input() firstGridData: any[] = []
+  @Input() skipButtons: boolean = false
+  @Input() firstGridData: any[]
   @Input() firstGridColumns: gridColumn[]
   @Input() firstGridHeight: number
   @Input() firstGridFooterTemplate: TemplateRef<HTMLElement>
-  @Input() secondGridData: any[] = []
+  @Input() secondGridData: any[]
   @Input() secondGridColumns: gridColumn[]
   @Input() secondGridHeight: number
   @Input() secondGridFooterTemplate: TemplateRef<HTMLElement>
@@ -103,7 +104,9 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       let totalData = this.firstGridData.concat(this.secondGridData)
+      console.log('item to compare,', Number(rowItem.textContent) )
       let selectedItem: any = totalData.find((i) => i[this.objectIdName] === Number(rowItem.textContent));
+      console.log('selected Item', selectedItem)
       let dataItem = JSON.stringify(selectedItem);
       e.dataTransfer.setData('text/plain', dataItem);
     });
@@ -133,9 +136,9 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
           droppedItems.forEach(droppedItem => {
             if (dragStartGridRef !== this.currentGridRef) {
               this.updateGridsData(droppedItem, droppedRowGridRef, dragStartGridRef);
-              this.setOfId = []
             }
           })
+          this.setOfId = []
         }
       } else {
         // Transfer only one row
@@ -154,7 +157,7 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.removeLineIndicators();
     } catch (e) {
-      console.log('Error in onDrop() ->', e)
+      console.error('Error in onDrop() ->', e)
     }
   }
 
@@ -202,28 +205,31 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
     dragStartGridData.splice(this.dropIndex, 0, droppedItem);
   }
 
-  public onMoveSecondGrid() {
+  public onMove(droppedRowGridRef: GridComponent, dragStartGridRef: GridComponent) {
     try {
-      if (this.setOfId) {
-        let i = 0
-        this.firstGridData = this.firstGridData.filter(item => {
-          if (this.setOfId.includes(item.ProductID)) {
-            this.secondGridData.splice(i, 0, item)
-            i++
-          } else {
-            return item
-          }
-        })
-        this.setOfId = []
-        // When new row is added to a table, the draggable attributes is set to that row.
-        this.zone.onStable.pipe(take(1)).subscribe(() => {
-          this.destroyListeners();
-          this.setDraggableRows();
-        });
-        this.removeLineIndicators();
+      if (this.setOfId && this.setOfId.length) {
+        // Transfer more than one row
+        let droppedItems: any[] = (droppedRowGridRef.data as any[]).filter(item => this.setOfId.includes(item[this.objectIdName]))
+        if (droppedItems && droppedItems.length) {
+          this.currentGridRef = droppedRowGridRef
+          droppedItems.forEach(droppedItem => {
+            if (dragStartGridRef !== this.currentGridRef) {
+              this.updateGridsData(droppedItem, droppedRowGridRef, dragStartGridRef);
+              this.dropIndex++
+            }
+          })
+          this.dropIndex = 0
+          this.setOfId = []
+        }
       }
+      // When new row is added to a table, the draggable attributes is set to that row.
+      this.zone.onStable.pipe(take(1)).subscribe(() => {
+        this.destroyListeners();
+        this.setDraggableRows();
+      });
+      // this.removeLineIndicators();
     } catch (e) {
-      console.log('Error in onMoveSecondGrid() ->', e)
+      console.error('Error in onMove() ->', e)
     }
   }
 
@@ -245,10 +251,10 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
           this.destroyListeners();
           this.setDraggableRows();
         });
-        this.removeLineIndicators();
+        // this.removeLineIndicators();
       }
     } catch (e) {
-      console.log('Error in onMoveFirstGrid() ->', e)
+      console.error('Error in onMoveFirstGrid() ->', e)
     }
   }
 
