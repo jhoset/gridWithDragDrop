@@ -1,14 +1,20 @@
+
 <div class="row">
   <!--  FIRST GRID-->
   <div class="col-6">
-    <!-- Header -->
-    <div style="height: 400px"  class="k-block">
+    <div class="k-block">
+      <!-- Header (optional) -->
+      <div *ngIf="firstGridHeaderTemplate">
+        <ng-container *ngTemplateOutlet="firstGridHeaderTemplate">
+        </ng-container>
+      </div>
+      <!--  Grid -->
       <button *ngIf="skipButtons"
-        style="width: 100%;"
-        kendoButton
-        (click)="onMove(firstGrid, secondGrid)"
-        themeColor="primary"
-        [toggleable]="true"
+              style="width: 100%;"
+              kendoButton
+              (click)="onMove(firstGrid, secondGrid)"
+              themeColor="primary"
+              [toggleable]="true"
       >
         Rigth
       </button>
@@ -23,22 +29,36 @@
         (dragover)="onDragOver($event, firstGrid)"
         (dragstart)="onDragStart($event, firstGrid)"
         [rowSelected]="isRowSelected">
+        <kendo-grid-column  [width]="5">
+          <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{rowIndex + 1}}
+          </ng-template>
+        </kendo-grid-column>
         <ng-container *ngFor="let column of firstGridColumns">
-          <kendo-grid-column [field]="column.field" [title]="column.title" [width]="column.width"></kendo-grid-column>
+          <kendo-grid-column [title]="column.title" [width]="column.width">
+            <ng-template kendoGridCellTemplate let-dataItem="dataItem">
+              {{ dataItem[column.field] }}
+              <span [id]="dataItem[objectIdName]" [hidden]="true" > {{  dataItem[objectIdName] | json }} </span>
+            </ng-template>
+          </kendo-grid-column>
         </ng-container>
         <kendo-grid-messages [noRecords]="noRecordsMsg"></kendo-grid-messages>
       </kendo-grid>
     </div>
     <!-- Footer (optional) -->
-    <div *ngIf="firstGridFooterTemplate" >
+    <div *ngIf="firstGridFooterTemplate">
       <ng-container *ngTemplateOutlet="firstGridFooterTemplate">
       </ng-container>
     </div>
   </div>
   <!--SECOND GRID-->
   <div class="col-6">
-    <!-- Header -->
-    <div style="height: 400px" class="k-block ">
+    <!-- Header (optional) -->
+    <div *ngIf="secondGridHeaderTemplate">
+      <ng-container *ngTemplateOutlet="secondGridHeaderTemplate">
+      </ng-container>
+    </div>
+    <div class="k-block ">
       <button
         *ngIf="skipButtons"
         style="width: 100%"
@@ -47,7 +67,7 @@
         themeColor="primary"
         [toggleable]="true"
       >
-        Rigth
+        Left
       </button>
       <!-- Body ( Grid ) -->
       <kendo-grid
@@ -60,13 +80,23 @@
         (dragover)="onDragOver($event, secondGrid)"
         (dragstart)="onDragStart($event, secondGrid)"
         [rowSelected]="isRowSelected">
+        <kendo-grid-column  [width]="5">
+          <ng-template kendoGridCellTemplate let-dataItem="dataItem" let-rowIndex="rowIndex">
+            {{rowIndex + 1}}
+          </ng-template>
+        </kendo-grid-column>
         <ng-container *ngFor="let column of secondGridColumns">
-          <kendo-grid-column [field]="column.field" [title]="column.title" [width]="column.width"></kendo-grid-column>
+          <kendo-grid-column [title]="column.title" [width]="column.width">
+            <ng-template kendoGridCellTemplate let-dataItem="dataItem">
+              {{ dataItem[column.field] }}
+              <span [id]="dataItem[objectIdName]" [hidden]="true" > {{  dataItem[objectIdName] | json }} </span>
+            </ng-template>
+          </kendo-grid-column>
         </ng-container>
         <kendo-grid-messages [noRecords]="noRecordsMsg"></kendo-grid-messages>
       </kendo-grid>
       <!-- Footer (optional) -->
-      <div *ngIf="secondGridFooterTemplate" >
+      <div *ngIf="secondGridFooterTemplate">
         <ng-container *ngTemplateOutlet="secondGridFooterTemplate">
         </ng-container>
       </div>

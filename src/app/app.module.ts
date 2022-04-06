@@ -13,6 +13,7 @@ import {CheckBoxModule} from "@progress/kendo-angular-inputs";
 import {StepperModule} from "@progress/kendo-angular-layout";
 import { GridPlusComponent } from './grid-plus/grid-plus.component';
 import {LabelModule} from "@progress/kendo-angular-label";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -25,18 +26,19 @@ import {LabelModule} from "@progress/kendo-angular-label";
     ButtonControlPanelComponent,
     GridPlusComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        DropDownsModule,
-        BrowserAnimationsModule,
-        GridModule,
-        TreeViewModule,
-        ButtonsModule,
-        CheckBoxModule,
-        StepperModule,
-        LabelModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    DropDownsModule,
+    BrowserAnimationsModule,
+    GridModule,
+    TreeViewModule,
+    ButtonsModule,
+    CheckBoxModule,
+    StepperModule,
+    LabelModule,
+    ReactiveFormsModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

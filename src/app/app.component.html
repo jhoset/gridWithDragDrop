@@ -1,45 +1,76 @@
 <!--<app-button-control-panel [heightFirst]="300" [heightSecond]="200"  >-->
 
 <!--</app-button-control-panel>-->
-
-
-<app-grid-plus [firstGridData]="firstData" [secondGridData]="secondData"
-               [firstGridColumns]="firstGridColumns" [skipButtons]="false"
-               [secondGridColumns]="SecondGridColumns" [objectIdName]="'ProductID'"
-               [secondGridFooterTemplate]="fgFooter">
-  <ng-template #fgFooter>
-    <div>
+<!-- CASE ONE -->
+<h5 class="text-center">
+  Default
+</h5>
+<app-grid-plus [firstGridData]="firstData" [secondGridData]="secondData" [objectIdName]="'ProductID'"
+               [firstGridColumns]="firstGridColumns" [secondGridColumns]="SecondGridColumns">
+</app-grid-plus>
+<h5 class="text-center">
+  Grid with buttons
+</h5>
+<app-grid-plus [firstGridData]="firstData2" [secondGridData]="secondData2" [objectIdName]="'ProductID'"
+               [skipButtons]="true"
+               [firstGridColumns]="firstGridColumns" [secondGridColumns]="SecondGridColumns">
+</app-grid-plus>
+<h5 class="text-center">
+  Grid with customized footer
+</h5>
+<app-grid-plus [firstGridData]="firstData3" [secondGridData]="secondData3" [objectIdName]="'ProductID'"
+               [skipButtons]="true"
+               [firstGridColumns]="firstGridColumns" [secondGridColumns]="SecondGridColumns"
+               [firstGridFooterTemplate]="firstFooter"
+               [secondGridFooterTemplate]="secondFooter">
+  <ng-template #firstFooter>
+    <div class="text-center bg-secondary">
       <kendo-label
         class="k-radio-label"
-        (click)="onTest()"
         [for]="terms1"
-        style="background: yellow"
-        text="Accept Terms & Conditions"
+        text="Accept Terms & Conditions(1)"
       ></kendo-label>
       <input type="radio" #terms1 kendoRadioButton/>
     </div>
-    <div>
+  </ng-template>
+  <ng-template #secondFooter>
+    <div class="text-center bg-secondary">
       <kendo-label
         class="k-radio-label"
-        [for]="terms2"
-        text="Accept Terms & Conditions"
+        [for]="terms1"
+        text="Accept Terms & Conditions(2)"
       ></kendo-label>
-      <input type="radio" #terms2 kendoRadioButton/>
+      <input type="radio" #terms1 kendoRadioButton/>
     </div>
   </ng-template>
 </app-grid-plus>
+<h5 class="text-center">
+  Grid with customized header(to filter data)
+</h5>
+<!-- CASE -->
+<app-grid-plus [firstGridData]="firstData4" [secondGridData]="secondData4"
+               [onFilter$]="onFilter$.asObservable()"
+               (droppedItemFirstGrid)="onTest1($event)"
+               (droppedItemSecondGrid)="onTest2($event)"
+               [firstGridColumns]="firstGridColumns" [skipButtons]="false"
+               [secondGridColumns]="SecondGridColumns" [objectIdName]="'ProductID'"
+               [firstGridHeaderTemplate]="firstGridHeader">
+  <ng-template #firstGridHeader>
+    <form [formGroup]="formGroupTest">
+      <kendo-dropdownlist
+        style="width: 100%"
+        (valueChange)="onChange()"
+        formControlName="category"
+        [data]="registrationForm"
+        textField="key"
+        valueField="value"
+        [defaultItem]="defaultItemRegistrationForm"
+        [valuePrimitive]="true">
+      </kendo-dropdownlist>
+    </form>
+  </ng-template>
+</app-grid-plus>
 
-<div>
-  <label> Registration Form Type:</label>
-  <kendo-dropdownlist
-    [data]="registrationForm"
-    [textField]="'key'"
-    [valueField]="'value'"
-    [defaultItem]="defaultItemRegistrationForm">
-  </kendo-dropdownlist>
-</div>
+
 <hr>
 
-{{ 'First' + (firstData | json) }}
-<hr>
-{{ 'Second' + (secondData | json) }}

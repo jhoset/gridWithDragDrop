@@ -1,7 +1,18 @@
-import {AfterViewInit, Component, Input, NgZone, OnDestroy, OnInit, Renderer2, TemplateRef} from '@angular/core';
+import {
+  AfterViewInit,
+  Component, EventEmitter,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  TemplateRef, ViewChild
+} from '@angular/core';
 import {GridComponent, RowArgs} from "@progress/kendo-angular-grid";
 import {take} from "rxjs/operators";
-
+import { v4 as uuidv4 } from 'uuid';
+import {Observable} from "rxjs";
 
 // Utils
 export const tableRow = (node) => {
@@ -28,16 +39,24 @@ export interface gridColumn {
   styleUrls: ['./grid-plus.component.css']
 })
 export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
+  // Outputs
+  @Output() droppedItemFirstGrid: EventEmitter<any> = new EventEmitter<any>()
+  @Output() droppedItemSecondGrid: EventEmitter<any> = new EventEmitter<any>()
   // Inputs
+  @Input() onFilter$: Observable<boolean> = new Observable<boolean>()
   @Input() objectIdName
   @Input() skipButtons: boolean = false
   @Input() firstGridData: any[]
   @Input() firstGridColumns: gridColumn[]
   @Input() firstGridHeight: number
+  @Input() firstGridHide: boolean
+  @Input() firstGridHeaderTemplate: TemplateRef<HTMLElement>
   @Input() firstGridFooterTemplate: TemplateRef<HTMLElement>
   @Input() secondGridData: any[]
   @Input() secondGridColumns: gridColumn[]
   @Input() secondGridHeight: number
+  @Input() secondGridHide: boolean
+  @Input() secondGridHeaderTemplate: TemplateRef<HTMLElement>
   @Input() secondGridFooterTemplate: TemplateRef<HTMLElement>
   // Attributes
   public setOfId: any[] = []
@@ -45,13 +64,24 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
   public noRecordsMsg = 'No records available yet'
   public currentGridRef: GridComponent
   public targetCells: NodeListOf<HTMLTableDataCellElement>
+  // ViewChild
+  @ViewChild('firstGrid') firstGrid: GridComponent
+  @ViewChild('secondGrid') secondGrid: GridComponent
 
   constructor(private renderer: Renderer2, public zone: NgZone) {
   }
 
   ngOnInit(): void {
+    this.onFilter$.subscribe( value => {
+      if ( value ) {
+        console.log('Configuring')
+        this.zone.onStable.pipe(take(1)).subscribe(() => {
+          this.destroyListeners();
+          this.setDraggableRows();
+        });
+      }
+    })
   }
-
   // Use an arrow function to capture the 'this' execution context of the class.
   public isRowSelected = (e: RowArgs) => this.setOfId.indexOf(e.dataItem[this.objectIdName]) >= 0;
 
@@ -94,21 +124,32 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
   public getAllRows(): Array<HTMLTableElement> {
     return Array.from(document.querySelectorAll('.k-grid tr'));
   }
-
+  public getUIDAndName( id: number) {
+       return id + uuidv4()
+  }
   public addDragListeners(item: HTMLElement): void {
     item.addEventListener('dragstart', (e: DragEvent) => {
-      const rowItem: HTMLTableDataCellElement = item.querySelector('td');
-
-      // Prevents dragging Grid header row
-      if (rowItem === null) {
+      // const rowItem: HTMLTableDataCellElement = item.querySelector('td');
+      // console.log('rowId', (item.getElementsByTagName('span')[0].id))
+      if ( !item.getElementsByTagName('span')[0]?.id ) {
         return;
       }
+      let rowIdItem = (item.getElementsByTagName('span')[0].id)
+      console.log('rowIdObject', (item.getElementsByTagName('span')[0].id) )
+      // Prevents dragging Grid header row
+      if ( !rowIdItem ) {
+        return;
+      }
+      // if (rowItem === null) {
+      //   return;
+      // }
       let totalData = this.firstGridData.concat(this.secondGridData)
-      console.log('item to compare,', Number(rowItem.textContent) )
-      let selectedItem: any = totalData.find((i) => i[this.objectIdName] === Number(rowItem.textContent));
-      console.log('selected Item', selectedItem)
-      let dataItem = JSON.stringify(selectedItem);
-      e.dataTransfer.setData('text/plain', dataItem);
+      let selectedItem: any = totalData.find((item) => item[this.objectIdName] == rowIdItem);
+      console.log('Selected Item', JSON.stringify(selectedItem))
+      if (selectedItem) {
+        let dataItem = JSON.stringify(selectedItem);
+        e.dataTransfer.setData('text/plain', dataItem);
+      }
     });
   }
 
@@ -117,12 +158,37 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       this.currentGridRef = grid;
       const draggedElement: string = (e.target as HTMLElement).innerText;
-      if (draggedElement.includes(this.objectIdName) || draggedElement === this.noRecordsMsg) {
+      if (this.isHeader(draggedElement) || draggedElement === this.noRecordsMsg) {
+        console.log('Se previene drag')
         e.preventDefault();
+      } else {
+        const droppedItem = JSON.parse(e.dataTransfer.getData('text/plain'))
+        if ( this.setOfId.length < 2 ) {
+          if ( this.currentGridRef === this.firstGrid ){
+            console.log('Emitira primero')
+            this.droppedItemFirstGrid.emit( droppedItem )
+          } else {
+            console.log('Emitira segundo')
+            this.droppedItemSecondGrid.emit( droppedItem )
+          }
+        }
       }
     } catch (e) {
       console.log('Error in onDragStart() ->', e)
     }
+  }
+
+  public isHeader(row: string): boolean {
+    let firstMatch = true
+    let secondMatch = true
+    this.firstGridColumns.forEach(column => {
+      firstMatch = firstMatch && row.includes(column.title)
+    })
+    this.secondGridColumns.forEach(column => {
+      secondMatch = secondMatch && row.includes(column.title)
+    })
+    console.log('isHeader', firstMatch || secondMatch)
+    return (firstMatch || secondMatch)
   }
 
   public onDrop(e: DragEvent, dragStartGridRef: GridComponent, droppedRowGridRef: GridComponent): void {
@@ -142,7 +208,6 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       } else {
         // Transfer only one row
-        console.log(e.dataTransfer)
         let data = e.dataTransfer.getData('text/plain');
         let droppedItem: any = JSON.parse(data);
         if (dragStartGridRef !== this.currentGridRef) {
@@ -155,7 +220,10 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
         this.destroyListeners();
         this.setDraggableRows();
       });
-      this.removeLineIndicators();
+      if (dragStartGridRef !== this.currentGridRef) {
+        this.removeLineIndicators();
+      }
+
     } catch (e) {
       console.error('Error in onDrop() ->', e)
     }
@@ -232,30 +300,4 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
       console.error('Error in onMove() ->', e)
     }
   }
-
-  public onMoveFirstGrid() {
-    try {
-      if (this.setOfId) {
-        let i = 0
-        this.secondGridData = this.secondGridData.filter(item => {
-          if (this.setOfId.includes(item.ProductID)) {
-            this.firstGridData.splice(i, 0, item)
-            i++
-          } else {
-            return item
-          }
-        })
-        this.setOfId = []
-        // When new row is added to a table, the draggable attributes is set to that row.
-        this.zone.onStable.pipe(take(1)).subscribe(() => {
-          this.destroyListeners();
-          this.setDraggableRows();
-        });
-        // this.removeLineIndicators();
-      }
-    } catch (e) {
-      console.error('Error in onMoveFirstGrid() ->', e)
-    }
-  }
-
 }
