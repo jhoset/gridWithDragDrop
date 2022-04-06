@@ -44,6 +44,7 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() droppedItemSecondGrid: EventEmitter<any> = new EventEmitter<any>()
   // Inputs
   @Input() onFilter$: Observable<boolean> = new Observable<boolean>()
+  @Input() multiSelect: boolean = true
   @Input() objectIdName
   @Input() skipButtons: boolean = false
   @Input() firstGridData: any[]
@@ -86,15 +87,28 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
   public isRowSelected = (e: RowArgs) => this.setOfId.indexOf(e.dataItem[this.objectIdName]) >= 0;
 
   public onCellClick({dataItem}) {
-    // Get de Id in the array of selected items
-    const idx = this.setOfId.findIndex(e => e == dataItem[this.objectIdName]);
-    if (idx > -1) {
-      // item is selected, remove it
-      this.setOfId.splice(idx, 1);
+    if ( this.multiSelect ) {
+      // Get de Id in the array of selected items
+      const idx = this.setOfId.findIndex(e => e == dataItem[this.objectIdName]);
+      if (idx > -1) {
+        // item is selected, remove it
+        this.setOfId.splice(idx, 1);
+      } else {
+        this.setOfId.push(dataItem[this.objectIdName]);
+      }
+      console.log('Total ( setOfId ) :', this.setOfId)
     } else {
-      this.setOfId.push(dataItem[this.objectIdName]);
+      const idx = this.setOfId.findIndex(e => e == dataItem[this.objectIdName]);
+      if (idx > -1) {
+        // item is selected, remove it
+        this.setOfId.splice(idx, 1);
+      } else {
+        if ( this.setOfId.length > 0 ) {
+          this.setOfId = []
+        }
+        this.setOfId.push(dataItem[this.objectIdName]);
+      }
     }
-    console.log('Total ( setOfId ) :', this.setOfId)
   }
 
   public ngAfterViewInit() {
@@ -135,7 +149,7 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       let rowIdItem = (item.getElementsByTagName('span')[0].id)
-      console.log('rowIdObject', (item.getElementsByTagName('span')[0].id) )
+      // console.log('rowIdObject', (item.getElementsByTagName('span')[0].id) )
       // Prevents dragging Grid header row
       if ( !rowIdItem ) {
         return;
@@ -145,7 +159,7 @@ export class GridPlusComponent implements OnInit, AfterViewInit, OnDestroy {
       // }
       let totalData = this.firstGridData.concat(this.secondGridData)
       let selectedItem: any = totalData.find((item) => item[this.objectIdName] == rowIdItem);
-      console.log('Selected Item', JSON.stringify(selectedItem))
+      // console.log('Selected Item', JSON.stringify(selectedItem))
       if (selectedItem) {
         let dataItem = JSON.stringify(selectedItem);
         e.dataTransfer.setData('text/plain', dataItem);
